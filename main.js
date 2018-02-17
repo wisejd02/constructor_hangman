@@ -82,8 +82,10 @@ function getGuess (playLetter, game){
             if(guessedLetters.indexOf(result.guess) === -1){
                 guessedLetters.push(result.guess);
                 playLetter.letterExist(result.guess);
+                getGuess (playLetter, game);
             }else{
                 console.log('You already used that letter.')
+                getGuess (playLetter, game);
             }
             if(playLetter.word !== playLetter.uncover.join("")){
             }else{
@@ -100,9 +102,9 @@ function getGuess (playLetter, game){
                     
                 }
                 
-
+                
             }
         });
-    
+        
 }
 
