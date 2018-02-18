@@ -36,6 +36,10 @@ function newWrd(){
 }
 
 function playAgn(nxt, game){
+    console.log("    ");
+    console.log("    ");
+    console.log("    ");
+    console.log("    ");
     inquirer.prompt([
         {
             type: "list",
@@ -45,8 +49,6 @@ function playAgn(nxt, game){
           }
     
         ]).then(function(choice) {
-             //if user answers yes then play game else do nothing
-            //console.log(choice.action);
             if(choice.action === "yes"){
                 guessedLetters= [];
                 getGuess (nxt, game)
@@ -67,6 +69,11 @@ function getGuess (playLetter, game){
     if(guessedLetters.length>0){
         console.log("These are your guesses: "+guessedLetters)
     }
+    askForLetter(playLetter, game);
+        
+}
+
+function askForLetter(playLetter, game){
     ask_prompt.start();
     var schema = {
         properties: {
@@ -78,33 +85,47 @@ function getGuess (playLetter, game){
         }
     };   
         ask_prompt.get(schema, function (err, result) {
-            console.log('  Guess: ' + result.guess);
-            if(guessedLetters.indexOf(result.guess) === -1){
-                guessedLetters.push(result.guess);
-                playLetter.letterExist(result.guess);
-                getGuess (playLetter, game);
-            }else{
-                console.log('You already used that letter.')
-                getGuess (playLetter, game);
-            }
-            if(playLetter.word !== playLetter.uncover.join("")){
-            }else{
-                if(playLetter.word === playLetter.uncover.join("")&& playLetter.tries !== playLetter.count){
-                    console.log("Hooraay you got it!! The word was "+playLetter.word+"!!")
-                } 
-                game.removeItm();
-                if(game.newList.length>0){
-                    var agn = game.word(game.newList);
-                    var nxt = new letter(agn);
-                    playAgn(nxt, game);
-                }else{
-                    console.log("Game Over")
-                    
-                }
-                
-                
-            }
+            var answer = result.guess
+            alreadyGuessed(playLetter, game, answer )
         });
-        
+}
+function alreadyGuessed(playLetter, game, answer){
+    if(guessedLetters.indexOf(answer) === -1){
+        guessedLetters.push(answer);
+        validateResponse(playLetter, game, answer);
+    }else{
+        console.log('You already used that letter.')
+        getGuess (playLetter, game);
+    }
 }
 
+function wordSolved(playLetter, game){
+    if(playLetter.word === playLetter.uncover.join("")&& playLetter.tries !== playLetter.count){
+        console.log("Hooraay you got it!! The word was "+playLetter.word+"!!")
+        moreWordsToPlay(game);        
+    }else if(playLetter.tries == playLetter.count){
+        moreWordsToPlay(game);
+    }else{
+        getGuess (playLetter, game);
+    }
+}
+
+function validateResponse(playLetter, game, answer){
+    
+    if(playLetter.word !== playLetter.uncover.join("")){
+        playLetter.letterExist(answer);
+        wordSolved(playLetter, game);
+        
+    }
+}
+
+function moreWordsToPlay(game){
+    game.removeItm();
+    if(game.newList.length>0){
+        var agn = game.word(game.newList);
+        var nxt = new letter(agn);
+        playAgn(nxt, game);
+    }else{
+        console.log("Game Over");
+    }
+}

@@ -10,23 +10,25 @@ Letter.prototype.triesLeft = function(guess){
 }
 
 Letter.prototype.letterExist = function(guess){
-    //var numTries= parseInt(this.word.length*.5);
     if(this.word.indexOf(guess, startValue) === -1){
         this.count++
         console.log("Your guess '"+guess +"' was incorrect!  You have have " + (this.tries - this.count)+ " guesses left!")
         if(this.count === this.tries){
-            console.log("Out of guesses!")
+            console.log("Out of guesses!");
+            console.log("Word was "+this.word);
             this.uncover = this.word.split("");
             
         }
         
+    }else{
+        var startValue = 0;
+        while (this.word.indexOf(guess, startValue) !== -1) {   
+            startValue = this.word.indexOf(guess, startValue) + 1;
+            this.uncover[startValue-1] = guess;  
+        }
     }
     
-    var startValue = 0;
-    while (this.word.indexOf(guess, startValue) !== -1) {   
-        startValue = this.word.indexOf(guess, startValue) + 1;
-        this.uncover[startValue-1] = guess;  
-    }
+    
     
     //console.log(this.uncover.join(" "));
     
